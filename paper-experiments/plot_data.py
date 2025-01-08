@@ -13,7 +13,7 @@ data = []
 colors = []
 
 # load pairwise error data
-# make sure to 
+# make sure that the data is present (i.e., execute compare.py before running this script)
 for name1 in NAMES:
     for name2, color in zip(NAMES, COLORS):
         if name1 == name2:
@@ -28,12 +28,15 @@ for name1 in NAMES:
 # plot pairwise error data as grouped boxplots
 x = np.array([1, 2, 3, 4, 11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44])
 y = np.array(data).T
-boxes = plt.boxplot(y, positions=x, patch_artist=True)
+boxes = plt.boxplot(y, positions=x, patch_artist=True, medianprops=dict(color='black'))
 
+# color boxes and outlier points
 for patch, color in zip(boxes['boxes'], colors):
-    patch.set_facecolor(color)
+    patch.set(facecolor=color)
+for flier, color in zip(boxes['fliers'], colors):
+    flier.set(marker='o', markerfacecolor=color)
 
-plt.ylabel('Pairwise error [px]')
+plt.ylabel('Pairwise error [µm]')
 plt.xlim(-2, 47)
 plt.xticks([2.5, 12.5, 22.5, 32.5, 42.5], ['STIM', 'Human #1', 'Human #2', 'Human #3', 'Human #4'])
 xtick_labels = plt.gca().get_xticklabels()
@@ -71,7 +74,7 @@ xticks_labels = [f"{renderFactor}" for renderFactor in df['renderFactor']]
 plt.xticks(ticks=np.arange(len(df)) + (np.arange(len(df)) // GROUP_SIZE) * SPACING, labels=xticks_labels, rotation=45, ha='right')
 
 plt.xlabel('Render Factor')
-plt.ylabel('Distance to Human #1 [px]')
+plt.ylabel('Distance to Human #1 [µm]')
 plt.legend()
 plt.tight_layout()
 plt.savefig('parameter_scan.pdf')
